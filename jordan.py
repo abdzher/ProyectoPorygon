@@ -3,7 +3,7 @@
 
 
 import numpy as np
-import sympy as sp
+#import sympy as sp
 import pandas as pd
 
 
@@ -14,6 +14,56 @@ resultado = np.array([0,0])
 n_decimales = 3
 simbol = False
 iniciado_desde_listas = False
+log = ''
+
+
+def iniciar_desde_texto(texto = '', mostrar_desarrollo = False, simbolico = False, numero_de_decimales = 3):
+    '''
+    """
+    INICIAR DESDE TEXTO: Lee una cadena de texto, se tienen que hacer separaciones con coma y punto y coma.
+    
+    Args:
+        texto(str) : Cadena de texto que se leera para obtener los datos.
+        mostrar_desarrollo(bool) : True o False, si se coloca True entonces se mostraran todas las iteraciones del programa.
+        simbolico(bool) : True o False, si se coloca True entonces se usaran matematicas simbolicas, es decir, los cocientes se expresaran como tal, en cambio, con False se usaran valores decimales.
+        numero_de_decimales(int): Indica la cantidad de decimales que se mostraran en caso de elegir trabajar con decimales.
+    
+    Returns:
+        Llama a la funcion 'iniciar' para continuar el programa.
+    """
+    
+    '''
+    global log
+    log = ''
+    
+    if simbolico == False:
+        try:
+            lista = np.mat(texto)
+        except SyntaxError:
+            log += '\n = Los datos indicados no son validos ='
+        except ValueError:
+            log += '\n = Los datos indicados no son validos ='
+        else:
+            try:
+                mtrx = np.array(lista, dtype=float)
+            except ValueError:
+                log += '\n = Los datos indicados no son validos ='
+            else:
+                iniciar(mtrx, mostrar_desarrollo, simbolico, numero_de_decimales)
+    elif simbolico == True:
+        try:
+            #mtrx = sp.Matrix([list(map(int, fila.split(','))) for fila in texto.split(';')])
+        #except SyntaxError:
+            log += '\n = Los datos indicados no son validos ='
+        except ValueError:
+            log += '\n = Los datos indicados no son validos ='
+        else:
+            try:
+                temp = np.array(mtrx, dtype=float)
+            except ValueError:
+                log += '\n = Los datos indicados no son validos ='
+            else:
+                iniciar(mtrx, mostrar_desarrollo, simbolico, numero_de_decimales)
 
 
 def iniciar_desde_csv(ubicacion, mostrar_desarrollo = False, simbolico = False, numero_de_decimales = 3):
@@ -29,27 +79,33 @@ def iniciar_desde_csv(ubicacion, mostrar_desarrollo = False, simbolico = False, 
     Returns:
         Llama a la funcion 'iniciar' para continuar el programa.
     """
-    
-    print(f'======= Se importara el archivo {ubicacion} =========')
-    
-    archivo = pd.read_csv(ubicacion)
-    a, b = archivo.shape
-    
-    listas = []
 
-    for j in range(1,a):
-        lista = []
-        for i in range(1,b):
-            lista.append(archivo.iloc[j,i])
-        listas.append(lista)
-
-    if simbolico == False:
-        mtrx = np.array(listas, dtype=float)
-        iniciar(mtrx, mostrar_desarrollo, simbolico, numero_de_decimales)
+    global log
+    log = ''
+    log += f'======= Se importara el archivo {ubicacion} =========\n\n'
     
-    elif simbolico == True:
-        mtrx = sp.Matrix(listas)
-        iniciar(mtrx, mostrar_desarrollo, simbolico, numero_de_decimales)
+    try:
+        archivo = pd.read_csv(ubicacion)
+    except FileNotFoundError:
+        log += f'{ubicacion} no es un directorio de archivo valido'
+    else:
+        a, b = archivo.shape
+        
+        listas = []
+
+        for j in range(1,a):
+            lista = []
+            for i in range(1,b):
+                lista.append(archivo.iloc[j,i])
+            listas.append(lista)
+
+        if simbolico == False:
+            mtrx = np.array(listas, dtype=float)
+            iniciar(mtrx, mostrar_desarrollo, simbolico, numero_de_decimales)
+        
+        #elif simbolico == True:
+            #mtrx = sp.Matrix(listas)
+            #iniciar(mtrx, mostrar_desarrollo, simbolico, numero_de_decimales)
         
 
 def iniciar_desde_listas(lista = [], mostrar_desarrollo = False, simbolico = False, numero_de_decimales = 3):
@@ -67,21 +123,23 @@ def iniciar_desde_listas(lista = [], mostrar_desarrollo = False, simbolico = Fal
     """
     global iniciado_desde_listas
     iniciado_desde_listas = True
+    global log
+    log = ''
     
     a = len(lista[0])
     for i in lista:
         b = len(i)
         if a != b:
-            print('Los elementos de la lista tienen diferentes longitudes, intente otra vez.')
+            log += 'Los elementos de la lista tienen diferentes longitudes, intente otra vez.\n'
             exit()
     
     if simbolico == False:
         mtrx = np.array(lista, dtype=float)
         iniciar(mtrx, mostrar_desarrollo, simbolico, numero_de_decimales)
     
-    elif simbolico == True:
-        mtrx = sp.Matrix(lista)
-        iniciar(mtrx, mostrar_desarrollo, simbolico, numero_de_decimales)
+    #elif simbolico == True:
+        #mtrx = sp.Matrix(lista)
+        #iniciar(mtrx, mostrar_desarrollo, simbolico, numero_de_decimales)
             
 
 
@@ -100,6 +158,9 @@ def iniciar(mtrx, mostrar_desarrollo=False, simbolico = False, numero_de_decimal
     """
     
     global desarrollo
+    global log
+    global iteracion
+    iteracion = 0
     desarrollo = mostrar_desarrollo
     
     global n_decimales
@@ -112,13 +173,13 @@ def iniciar(mtrx, mostrar_desarrollo=False, simbolico = False, numero_de_decimal
     m = mtrx.shape[0] - 1 # Num de hileras
     n = mtrx.shape[1] - 1 # Num de columnas
     
-    print('====== EL PROCESO SERA INICIADO =======')
-    print(f'La matriz inicial es \n{mtrx}')
-    print(f'La matriz es de {m+1}X{n+1}')
+    log += '====== EL PROCESO SERA INICIADO =======\n'
+    log += f'La matriz inicial es \n{np.array(mtrx, dtype = str)}\n'
+    log += f'La matriz es de {m+1}X{n+1}\n'
     
-    if desarrollo == True: print('Se mostrara cada iteracion del programa')
-    if simbolico == True: print('Se usaran matematicas simbolicas')
-    else: print(f'Se usaran valores decimales con {n_decimales} de precision')
+    if desarrollo == True: log += 'Se mostrara cada iteracion del programa\n'
+    if simbolico == True: log += 'Se usaran matematicas simbolicas\n'
+    else: log += f'Se usaran valores decimales con {n_decimales} de precision\n'
     
     obtener_indice(mtrx,m,n)
     
@@ -169,6 +230,7 @@ def obtener_pivote(indice,mtrx,m,n):
     
     global desarrollo
     global iteracion
+    global log
     
     iteracion += 1
     lista = []
@@ -183,11 +245,11 @@ def obtener_pivote(indice,mtrx,m,n):
     try:
         r = lista.index(min(lista))
     except TypeError:
-        print('=== SE HAN INDICADO VALORES NO NUMERICOS PARA LA MATRIZ ===')
+        log += '=== SE HAN INDICADO VALORES NO NUMERICOS PARA LA MATRIZ ===\n'
         exit()
     
     if desarrollo == True: 
-        print(f'\n==== Iteracion numero: {iteracion}\nEl pivote elegido es: \n({r},{indice}) con valor {mtrx[r,indice]}')
+        log += f'\n==== Iteracion numero: {iteracion}\nEl pivote elegido es: \n({r},{indice}) con valor {mtrx[r,indice]}\n'
     
     resolver(r,indice,mtrx,m,n)
 
@@ -210,6 +272,7 @@ def resolver(r,s,mtrx,m,n):
     
     global desarrollo
     global simbol
+    global log
     matrix = mtrx
     clon = np.copy(mtrx)
     pivote = mtrx[r,s]
@@ -232,22 +295,22 @@ def resolver(r,s,mtrx,m,n):
                 else: matrix[i,j] = clon[i,j] - ((clon[i,s]*clon[r,j])/pivote)
                 
     if desarrollo == True: 
-        print(f'El resultado de la iteracion es:')
-        if simbol == True: sp.pprint(matrix)
-        else: print(matrix)
+        log += f'El resultado de la iteracion es:\n'
+        if simbol == True: log += f'{np.array(matrix, dtype = str)}\n'
+        else: log += f'{matrix}'
     obtener_indice(matrix,m,n)    
     
 
 def final(mtrx):
     global iteracion
     global resultado
+    global log
     resultado = mtrx
-    print(f'''
+    log += f'''
 =====================================================
 El proceso se ha finalizado, solucion en 
-{iteracion} iteraciones. La matriz resultante es:
+{iteracion} iteraciones. La matriz resultante es:\n
 '''
-    )
-    if simbol == True: sp.pprint(mtrx)
-    else: print(mtrx)
+    if simbol == True: log += f'{np.array(mtrx, dtype = str)}\n'
+    else: log += f'{mtrx}\n'
     

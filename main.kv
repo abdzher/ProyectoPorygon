@@ -1,0 +1,131 @@
+#:import hex kivy.utils.get_color_from_hex
+
+<BotonEstandar@Button>:
+    halign: 'center'
+    valign: 'center'
+    canvas.before:
+        Color:
+            rgba: hex('#AAAAAA')
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
+<MainLayout>:
+    canvas.before:
+        Color:
+            rgba: hex('#202020')
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    padding: [10,10,10,10]
+    orientation: 'vertical'
+    spacing: 15
+    
+    TextInput:
+        id: input
+        hint_text: 'Introduzca los datos de su tabla ordenada por ","\ny ";" para saltos de hilera, o la direccion de su archivo csv.\nSi eligio indicar la cantidad de decimales\nsepare la cantidad indicada con un espacio.'
+        size_hint_y: 0.3
+        on_text: root.obtener_texto()
+        
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint_y: 0.15
+        spacing: 6
+
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint_x: 0.4
+            spacing: 10
+            padding: [5,5,5,5]
+            canvas.before:
+                Color:
+                    rgba: hex('#000000')
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            #BoxLayout:
+            #    orientation: 'horizontal'
+            #    CheckBox:
+            #        id: 0
+            #        size_hint_x: 0.2
+            #        on_active: root.simbolico(self, self.active)
+            #    Label:
+            #        text: 'Usar matematicas simbolicas.'
+            #        font_size: 12
+            #        size_hint_x: 0.8
+            BoxLayout:
+                orientation: 'horizontal'
+                CheckBox:
+                    id: 1
+                    size_hint_x: 0.2
+                    on_active: root.mostrar_desarrollo(self, self.active)
+                Label:
+                    text: 'Mostrar desarrollo completo.'
+                    font_size: 12
+                    size_hint_x: 0.8
+            BoxLayout:
+                orientation: 'horizontal'
+                CheckBox:
+                    id: 2
+                    size_hint_x: 0.2
+                    on_active: root.obtener_decimales(self, self.active)
+                Label:
+                    text: 'Indicar cantidad de decimales'
+                    font_size: 12
+                    size_hint_x: 0.8
+            
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_x: 0.6
+            spacing: 10
+
+            BotonEstandar:
+                text: 'Iniciar\ndesde CSV'
+                id: 3
+                size_hint_x: 0.5
+                on_release: root.iniciar_csv()
+            BotonEstandar:
+                text: 'Iniciar desde\ndatos (,;)'
+                id: 4
+                size_hint_x: 0.5
+                on_release: root.iniciar_datos()
+    
+    ScrollView:
+        id: scroll_view
+        size_hint_y: 0.45
+        do_scroll_x: True
+        do_scroll_y: True
+        always_overscroll: False
+
+        Label:
+            id: resultado
+            text: ''
+            size_hint_y: None
+            size_hint_x: 1
+            text_size: self.width, None
+            height: self.texture_size[1]
+    
+    BoxLayout:
+        size_hint_y: 0.1
+        orientation: 'horizontal'
+        spacing: 10
+        BotonEstandar:
+            id: 5
+            size_hint_x: 0.3
+            text: 'Limpiar'
+            on_release: root.limpiar()
+        BotonEstandar:
+            id: 6
+            size_hint_x: 0.3
+            text: 'Exportar TXT'
+            on_release: root.exportar_txt()
+        BotonEstandar:
+            id: 7
+            size_hint_x: 0.3
+            text: 'Exportar CSV'
+            on_release: root.exportar_csv()
+        BotonEstandar:
+            id: 8
+            size_hint_x: 0.1
+            text: 'info'
+            on_release: root.informacion()
