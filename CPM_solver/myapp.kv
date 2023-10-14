@@ -1,0 +1,77 @@
+#:import hex kivy.utils.get_color_from_hex
+
+<MyappLayout>:
+    canvas.before:
+        Color:
+            rgba: hex('#202020')
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    padding: [10,10,10,10]
+    orientation: 'vertical'
+    spacing: 15
+
+    BoxLayout:
+        orientation: 'horizontal'
+        spacing: 15
+        size_hint_y: 0.4
+
+        TextInput:
+            id: ubicacion
+            hint_text: 'Escriba la ubicacion de su archivo CSV.'
+            size_hint_x: 0.7
+            on_text: root.obtener_ubicacion()
+            
+        BoxLayout:
+            orientation: 'vertical'
+            spacing: 10
+            size_hint_x: 0.3
+
+            Label:
+                text: 'Escriba la fecha inicial.'
+
+            TextInput:
+                id: dia
+                hint_text: 'DIA'
+                on_text: root.obtener_dia()
+
+            TextInput:
+                id: mes
+                hint_text: 'MES'
+                on_text: root.obtener_mes()
+                
+            TextInput:
+                id: anio
+                hint_text: 'AÑO'
+                on_text: root.obtener_anio()
+
+    Button:
+        text: 'Presione para iniciar'
+        size_hint_y: 0.15
+        on_release: root.comienzo()
+
+    ScrollView:
+        id: scrollable
+        size_hint_y: 0.50
+        do_scroll_x: True
+        do_scroll_y: True
+        always_overscroll: True
+
+        Label:
+            id: output
+            text: ''
+            size_hint_y: None
+            size_hint_x: 1
+            text_size: self.width, None
+            height: self.texture_size[1]
+    
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint_y: 0.05
+        BoxLayout:
+            size_hint_x: 0.8
+        Button:
+            id: informacion
+            size_hint_x: 0.2
+            text: 'Informacion'
+            on_release: root.info()
